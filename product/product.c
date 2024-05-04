@@ -1,32 +1,18 @@
 /*
- * LED blink with FreeRTOS
+ * RP2040 divider check program
  */
 
 #include <FreeRTOS.h>
 #include <task.h>
+#include <timers.h>
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "include/blink.h"
+#include "../blink/include/blink.h"
 
-void led_task(void *p)
-{
-    struct led_task_arg *a = (struct led_task_arg *)p;
-
-    gpio_init(a->gpio);
-    gpio_set_dir(a->gpio, GPIO_OUT);
-    while (true) {
-        gpio_put(a->gpio, 1);
-        vTaskDelay(pdMS_TO_TICKS(a->delay));
-        gpio_put(a->gpio, 0);
-        vTaskDelay(pdMS_TO_TICKS(a->delay));
-    }
-}
-
-
-int nomain()
+void main()
 {
     stdio_init_all();
-    printf("Start LED blink\n");
+    printf("Product test\n");
 
     struct led_task_arg arg1 = { 15, 100 };
     xTaskCreate(led_task, "LED_Task 1", 256, &arg1, 1, NULL);
@@ -36,6 +22,7 @@ int nomain()
 
     struct led_task_arg arg3 = { 13, 300 };
     xTaskCreate(led_task, "LED_Task 3", 256, &arg3, 1, NULL);
+
 
     vTaskStartScheduler();
 
