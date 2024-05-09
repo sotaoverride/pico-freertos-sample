@@ -18,4 +18,5 @@ add_subdirectory(freertos)
 add_subdirectory(blink)
 add_subdirectory(divcheck)
 add_subdirectory(product)
+add_subdirectory(msgqueue)
 
