@@ -1,3 +1,5 @@
+#ifndef MSGQUEUE
+#define MSGQUEUE
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -45,3 +47,4 @@ void DestructQueue(Queue *queue);
 int Enqueue(Queue *pQueue, NODE *item);
 NODE *Dequeue(Queue *pQueue);
 int isEmpty(Queue* pQueue);
+#endif
