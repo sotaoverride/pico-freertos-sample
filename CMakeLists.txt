@@ -20,5 +20,5 @@ add_subdirectory(yellowled)
 add_subdirectory(greenled)
 add_subdirectory(divcheck)
 add_subdirectory(product)
+add_subdirectory(common)
 add_subdirectory(msgqueue)
-

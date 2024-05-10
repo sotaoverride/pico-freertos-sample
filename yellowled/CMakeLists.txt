@@ -4,6 +4,8 @@ add_library(yellowled STATIC
 
 target_include_directories(yellowled PUBLIC
     .
+    "../common/"
+    "../msgqueue"
     "../freertos/FreeRTOS-Kernel/include/"
     "../freertos/"
     "../freertos/FreeRTOS-Kernel/portable/GCC/ARM_CM0/"

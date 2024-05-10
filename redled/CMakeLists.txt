@@ -13,5 +13,6 @@ target_include_directories(redled PUBLIC
 )
 
 target_link_libraries(redled LINK_PUBLIC
+		      common
 		      pico_stdlib
 		      )
