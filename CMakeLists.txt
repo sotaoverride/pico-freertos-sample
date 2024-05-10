@@ -15,7 +15,9 @@ pico_sdk_init()
 
 # rest of your project
 add_subdirectory(freertos)
-add_subdirectory(blink)
+add_subdirectory(redled)
+add_subdirectory(yellowled)
+add_subdirectory(greenled)
 add_subdirectory(divcheck)
 add_subdirectory(product)
 add_subdirectory(msgqueue)

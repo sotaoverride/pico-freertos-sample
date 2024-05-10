@@ -12,15 +12,15 @@ enum Msg_T{
 };
 
 enum MsgOrigin_T{
-	task1,
-	task2,
-	task3
+	redledtaskorigin,
+	yellowledtaskorigin,
+	greenledtaskorigin
 };
 
 enum MsgDest_T{
-	task1_dest,
-	task2_dest,
-	task3_dest
+	redledtaskdest,
+	yellowledtaskdest,
+	greenledtaskdest
 };
 
 typedef struct Msg{

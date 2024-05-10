@@ -1,8 +1,8 @@
-add_library(blink STATIC
-	blink.c
+add_library(yellowled STATIC
+	yellowled.c
 )
 
-target_include_directories(blink PUBLIC
+target_include_directories(yellowled PUBLIC
     .
     "../freertos/FreeRTOS-Kernel/include/"
     "../freertos/"
@@ -10,6 +10,6 @@ target_include_directories(blink PUBLIC
 
 )
 
-target_link_libraries(blink LINK_PUBLIC
+target_link_libraries(yellowled LINK_PUBLIC
 		      pico_stdlib
 		      )
