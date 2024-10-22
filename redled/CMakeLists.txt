@@ -1,6 +1,7 @@
 add_library(redled STATIC
 	redled.c
 )
+target_sources(redled PRIVATE ../common/led_task.c)
 
 target_include_directories(redled PUBLIC
     .
@@ -13,6 +14,5 @@ target_include_directories(redled PUBLIC
 )
 
 target_link_libraries(redled LINK_PUBLIC
-		      common
 		      pico_stdlib
 		      )
