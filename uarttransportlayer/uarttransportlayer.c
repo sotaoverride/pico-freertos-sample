@@ -49,17 +49,13 @@ void uart_task(void *pvParameters) {
         //if (ulNotificationValue == 1) {
             /* Handle received data */
             if (uart_is_writable(UART_ID)) {
-                  uart_putc(UART_ID, rxChar); // echo incoming char
+                  uart_putc(UART_ID, rxChar+1); // echo incoming char
             }
-            while (uart_is_readable(UART_ID)) {
+            if (uart_is_readable(UART_ID)) {
                 rxChar = uart_getc(UART_ID);
-                // TODO remove test code
-                if (uart_is_writable(UART_ID)) {
-                    uart_putc(UART_ID, rxChar+1); // echo incoming char
-                }
-                if (rxChar == 'b') {
+	    }
+            if (rxChar == 'b') {
                     gpio_xor_mask(1u << PICO_DEFAULT_LED_PIN); // toggle led
-                }
             }
         //}
     }
