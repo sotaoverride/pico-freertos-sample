@@ -22,3 +22,6 @@ add_subdirectory(divcheck)
 add_subdirectory(product)
 add_subdirectory(common)
 add_subdirectory(msgqueue)
+add_subdirectory(cobs)
+add_subdirectory(uarttransportlayer)
+

@@ -31,7 +31,7 @@ typedef struct Msg{
 	enum Msg_T msg_t;
 	enum MsgOrigin_T  msgorigin_t;
 	enum MsgDest_T msgdest_t;
-	enum MsgTransportLayer_t msgtransportlayer_t;
+	//enum MsgTransportLayer_t msgtransportlayer_t;
 } MSG_T;
 
 typedef struct Node_t {
