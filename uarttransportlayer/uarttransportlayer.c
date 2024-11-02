@@ -5,10 +5,16 @@
 #include "uarttransportlayer.h"
 volatile TaskHandle_t xTaskToNotify_UART = NULL;
 
-uint8_t rxChar;
+uint8_t rxChar = 'b';
 
 
 void initUART() {
+ // Set up our UART
+    uart_init(UART_ID, BAUD_RATE);
+    // Set the TX and RX pins by using the function select on the GPIO
+    // Set datasheet for more information on function select
+    gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
+    gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
     // Set data format
     uart_set_format(UART_ID, DATA_BITS, STOP_BITS, PARITY);        
     // Turn off FIFO's - we want to do this character by character
@@ -20,12 +26,6 @@ void initUART() {
     // And set up and enable the interrupt handlers
     irq_set_exclusive_handler(UART_IRQ, UART_Isr);
     irq_set_enabled(UART_IRQ, true);
- // Set up our UART
-    uart_init(UART_ID, BAUD_RATE);
-    // Set the TX and RX pins by using the function select on the GPIO
-    // Set datasheet for more information on function select
-    gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
-    gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
 }
 
 void uart_task(void *pvParameters) {
@@ -44,21 +44,24 @@ void uart_task(void *pvParameters) {
          the first parameter is pdTRUE, which has the effect of clearing
          the task's notification value back to 0, making the notification
          value act like a binary (rather than a counting) semaphore.  */
-        ulNotificationValue = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        //ulNotificationValue = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
-        if (ulNotificationValue == 1) {
+        //if (ulNotificationValue == 1) {
             /* Handle received data */
+            if (uart_is_writable(UART_ID)) {
+                  uart_putc(UART_ID, rxChar); // echo incoming char
+            }
             while (uart_is_readable(UART_ID)) {
                 rxChar = uart_getc(UART_ID);
                 // TODO remove test code
                 if (uart_is_writable(UART_ID)) {
-                    uart_putc(UART_ID, rxChar); // echo incoming char
+                    uart_putc(UART_ID, rxChar+1); // echo incoming char
                 }
                 if (rxChar == 'b') {
                     gpio_xor_mask(1u << PICO_DEFAULT_LED_PIN); // toggle led
                 }
             }
-        }
+        //}
     }
 }
 // UART activate a receive with interrupt. Wait for ever for UART_BUFFER_SIZE bytes
