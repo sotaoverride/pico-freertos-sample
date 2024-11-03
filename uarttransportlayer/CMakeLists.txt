@@ -1,6 +1,7 @@
 add_library(uartTransportlayer STATIC
 	uarttransportlayer.c
 )
+target_sources(uartTransportlayer PRIVATE ../product/product.c)
 
 target_include_directories(uartTransportlayer PUBLIC
     .
@@ -10,6 +11,7 @@ target_include_directories(uartTransportlayer PUBLIC
     "../freertos/"
     "../freertos/FreeRTOS-Kernel/portable/GCC/ARM_CM0/"
     "../utils/"
+    "../product/"
 
 )
 

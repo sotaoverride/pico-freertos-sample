@@ -3,10 +3,12 @@
  */
 
 #include "uarttransportlayer.h"
-#include "../utils/circbuffer.h"
 volatile TaskHandle_t xTaskToNotify_UART = NULL;
 
 uint8_t rxChar = 'b';
+CIRCBUF_DEF(UartMsg, uart_tx_buff, 10);
+
+CIRCBUF_DEF_FUNCS(UartMsg, uart_tx_buff, 10);
 
 
 void initUART() {

@@ -22,6 +22,9 @@ typedef struct {
 	int const element_size;
 } circbuf_t;
 
+#define __CIRCBUF_VAR_DEF_extern(type, buf, sz)		\
+	extern type buf ## _circbuf_data[sz];			\
+	extern circbuf_t buf;
 #define __CIRCBUF_VAR_DEF(type, buf, sz)		\
 	type buf ## _circbuf_data[sz];			\
 	circbuf_t buf = {				\
@@ -53,7 +56,22 @@ int __circbuf_free_space(circbuf_t *circbuf);
  *   CIRCBUF_DEF(struct foo, foo_buf, 10);
  */
 #define CIRCBUF_DEF(type, buf, size)			\
-	__CIRCBUF_VAR_DEF(type, buf, size)		\
+	__CIRCBUF_VAR_DEF(type, buf, size)		
+#define CIRCBUF_DEF_FUNCS_SIGS(type, buf, size)			\
+	int buf ## _push_refd(type *pt);			\
+	int buf ## _pop_refd(type *pt);			\
+	int buf ## _peek_refd(type *pt);			
+#define MAX_UART_DATA_LENGTH 256
+
+typedef struct uart_msg {
+	uint8_t data[MAX_UART_DATA_LENGTH];
+	uint8_t len;
+} UartMsg;
+
+__CIRCBUF_VAR_DEF_extern(UartMsg, uart_tx_buff, 10);
+
+CIRCBUF_DEF_FUNCS_SIGS(UartMsg, uart_rx_buff, 10)
+#define CIRCBUF_DEF_FUNCS(type, buf, size)			\
 	int buf ## _push_refd(type *pt)			\
 	{						\
 		return __circbuf_push(&buf, pt);	\
