@@ -102,17 +102,22 @@ void main()
 static void prvSetupHardware();
 
 int main() {
+    UartMsg tmp={.data = "hello world", .len = 5};
+    CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
     /* Configure the hardware */
     prvSetupHardware();
 
+
     /* Create the UART task. */
     xTaskCreate(uart_task, "UART task", UART_TASK_STACK_SIZE,
-        NULL, UART_TASK_PRIORITY, NULL);
+        uart_tx_buff.buffer, UART_TASK_PRIORITY, NULL);
 
     /* Start the tasks and timer running. */
     vTaskStartScheduler();
 
-    for (;;) {}
+    for (;;) {
+    CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
+    }
     return 0;
 }
 

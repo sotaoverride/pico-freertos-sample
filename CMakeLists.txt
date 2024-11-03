@@ -14,6 +14,7 @@ SET(LIBRAR_VERSION_STRING 0.1)
 pico_sdk_init()
 
 # rest of your project
+add_subdirectory(utils)
 add_subdirectory(freertos)
 add_subdirectory(redled)
 add_subdirectory(yellowled)

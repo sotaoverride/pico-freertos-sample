@@ -3,6 +3,7 @@
  */
 
 #include "uarttransportlayer.h"
+#include "../utils/circbuffer.h"
 volatile TaskHandle_t xTaskToNotify_UART = NULL;
 
 uint8_t rxChar = 'b';
@@ -31,9 +32,14 @@ void initUART() {
 void uart_task(void *pvParameters) {
 
 	/* To avoid compiler warnings */
-	(void) pvParameters;
+	(UartMsg*) pvParameters;
 	uint32_t ulNotificationValue;
 	xTaskToNotify_UART = NULL;
+	int counter = 0;
+	UartMsg tmp={};
+        CIRCBUF_PEEK(uart_tx_buff, &tmp);
+	//int size = sizeof(uart_msg);
+	bool msg_written = false;
 
 	// TODO semaphore
 
@@ -42,8 +48,15 @@ void uart_task(void *pvParameters) {
 		UART_receive();
 		//This write is for testing - in real word other HW would be doing the writes...
 
-		if (uart_is_writable(UART_ID)) {
-			uart_putc(UART_ID, rxChar+1); // echo incoming char
+		//if uart_tx bffer !- emputy and msg_writtern=false and counter != size-1
+		if (uart_is_writable(UART_ID) && !msg_written) {
+			uart_putc(UART_ID, *((char*)(&tmp+counter)));
+		       counter++;	// echo incoming char
+		       if (counter == sizeof(UartMsg)-1){
+			       counter =0;
+			       msg_written=false;
+			       CIRCBUF_PEEK(uart_tx_buff, &tmp);
+		       }
 		}
 		/* Wait to be notified that the receive is complete.  Note
 		   the first parameter is pdTRUE, which has the effect of clearing

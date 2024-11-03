@@ -14,6 +14,13 @@
 #include "pico/stdlib.h"
 #include "../common/led_task.h"
 #include "../msgqueue/msgqueue.h"
+#include "../utils/circbuffer.h"
+#define MAX_UART_DATA_LENGTH 256
+typedef struct uart_msg {
+	uint8_t data[MAX_UART_DATA_LENGTH];
+	uint8_t len;
+} UartMsg;
+CIRCBUF_DEF(UartMsg, uart_tx_buff, 10);
 
 /* Task parameters for UART Task. */
 #define UART_TASK_PRIORITY       (2)
@@ -31,8 +38,8 @@
 #define PARITY    UART_PARITY_NONE
 // Use pins 4 and 5 for UART1
 // Pins can be changed, see the GPIO function select table in the datasheet for information on GPIO assignments
-#define UART_TX_PIN 4
-#define UART_RX_PIN 5
+#define UART_TX_PIN 0
+#define UART_RX_PIN 1
 /* Stores the handle of the task that will be notified when the
  receive is complete. */
 void initUART();
