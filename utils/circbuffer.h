@@ -70,7 +70,7 @@ typedef struct uart_msg {
 
 __CIRCBUF_VAR_DEF_extern(UartMsg, uart_tx_buff, 10);
 
-CIRCBUF_DEF_FUNCS_SIGS(UartMsg, uart_rx_buff, 10)
+CIRCBUF_DEF_FUNCS_SIGS(UartMsg, uart_tx_buff, 10)
 #define CIRCBUF_DEF_FUNCS(type, buf, size)			\
 	int buf ## _push_refd(type *pt)			\
 	{						\

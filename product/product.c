@@ -117,7 +117,7 @@ int main() {
     vTaskStartScheduler();
 
     for (;;) {
-    CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
+    CIRCBUF_PUSH(uart_tx_buff, (UartMsg *)&tmp);
     }
     return 0;
 }

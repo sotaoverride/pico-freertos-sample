@@ -3,6 +3,7 @@
  */
 
 #include "uarttransportlayer.h"
+#include <string.h>
 volatile TaskHandle_t xTaskToNotify_UART = NULL;
 
 uint8_t rxChar = 'b';
@@ -38,10 +39,10 @@ void uart_task(void *pvParameters) {
 	uint32_t ulNotificationValue;
 	xTaskToNotify_UART = NULL;
 	int counter = 0;
-	UartMsg tmp={};
+	UartMsg tmp;
+	memset(&tmp, 0, sizeof(UartMsg));
         CIRCBUF_PEEK(uart_tx_buff, &tmp);
 	//int size = sizeof(uart_msg);
-	bool msg_written = false;
 
 	// TODO semaphore
 
@@ -51,12 +52,12 @@ void uart_task(void *pvParameters) {
 		//This write is for testing - in real word other HW would be doing the writes...
 
 		//if uart_tx bffer !- emputy and msg_writtern=false and counter != size-1
-		if (uart_is_writable(UART_ID) && !msg_written) {
+		if (uart_is_writable(UART_ID) && counter<sizeof(UartMsg) && tmp.len != 0) {
 			uart_putc(UART_ID, *((char*)(&tmp+counter)));
 		       counter++;	// echo incoming char
 		       if (counter == sizeof(UartMsg)-1){
 			       counter =0;
-			       msg_written=false;
+	                       memset(&tmp, 0, sizeof(UartMsg));
 			       CIRCBUF_PEEK(uart_tx_buff, &tmp);
 		       }
 		}
