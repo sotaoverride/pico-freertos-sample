@@ -34,6 +34,9 @@ void initUART() {
 
 void uart_task(void *pvParameters) {
 
+    	gpio_init(6);
+    	gpio_set_dir(6, 1);
+    	gpio_put(6, 0);
 	/* To avoid compiler warnings */
 	(UartMsg*) pvParameters;
 	uint32_t ulNotificationValue;
@@ -48,21 +51,20 @@ void uart_task(void *pvParameters) {
 
 	while (true) {
 		/* Start the receiving from UART. */
-		UART_receive();
-		//This write is for testing - in real word other HW would be doing the writes...
-		CIRCBUF_POP(uart_tx_buff, &tmp);
-
 		//if uart_tx bffer !- emputy and msg_writtern=false and counter != size-1
-		if (uart_is_writable(UART_ID) && counter<sizeof(UartMsg) && tmp.len != 0) {
+		if (uart_is_writable(UART_ID) ) {
 			uart_putc(UART_ID, *((char*)(&tmp+counter)));
 		       counter++;	// echo incoming char
+			if (counter == sizeof(UartMsg)-1){
+		      		counter =0;
+	              		memset(&tmp, 0, sizeof(UartMsg));
+		      		CIRCBUF_POP(uart_tx_buff, &tmp);
+			}
 					// 
 		}
-		if (counter == sizeof(UartMsg)-1){
-		      counter =0;
-	              memset(&tmp, 0, sizeof(UartMsg));
-		      CIRCBUF_POP(uart_tx_buff, &tmp);
-		}
+		UART_receive();
+		//This write is for testing - in real word other HW would be doing the writes...
+
 		/* Wait to be notified that the receive is complete.  Note
 		   the first parameter is pdTRUE, which has the effect of clearing
 		   the task's notification value back to 0, making the notification
@@ -74,8 +76,8 @@ void uart_task(void *pvParameters) {
 			if (uart_is_readable(UART_ID)) {
 				rxChar = uart_getc(UART_ID);
 			}
-			if (rxChar == 'h') {
-				gpio_xor_mask(1u << PICO_DEFAULT_LED_PIN); // toggle led
+			if (rxChar == 'P') {
+				gpio_xor_mask(1u << 6); // toggle led
 			}
 		}
 	}
