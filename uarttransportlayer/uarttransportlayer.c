@@ -41,7 +41,7 @@ void uart_task(void *pvParameters) {
 	int counter = 0;
 	UartMsg tmp;
 	memset(&tmp, 0, sizeof(UartMsg));
-        CIRCBUF_PEEK(uart_tx_buff, &tmp);
+        CIRCBUF_POP(uart_tx_buff, &tmp);
 	//int size = sizeof(uart_msg);
 
 	// TODO semaphore
@@ -50,16 +50,18 @@ void uart_task(void *pvParameters) {
 		/* Start the receiving from UART. */
 		UART_receive();
 		//This write is for testing - in real word other HW would be doing the writes...
+		CIRCBUF_POP(uart_tx_buff, &tmp);
 
 		//if uart_tx bffer !- emputy and msg_writtern=false and counter != size-1
 		if (uart_is_writable(UART_ID) && counter<sizeof(UartMsg) && tmp.len != 0) {
 			uart_putc(UART_ID, *((char*)(&tmp+counter)));
 		       counter++;	// echo incoming char
-		       if (counter == sizeof(UartMsg)-1){
-			       counter =0;
-	                       memset(&tmp, 0, sizeof(UartMsg));
-			       CIRCBUF_PEEK(uart_tx_buff, &tmp);
-		       }
+					// 
+		}
+		if (counter == sizeof(UartMsg)-1){
+		      counter =0;
+	              memset(&tmp, 0, sizeof(UartMsg));
+		      CIRCBUF_POP(uart_tx_buff, &tmp);
 		}
 		/* Wait to be notified that the receive is complete.  Note
 		   the first parameter is pdTRUE, which has the effect of clearing
@@ -72,7 +74,7 @@ void uart_task(void *pvParameters) {
 			if (uart_is_readable(UART_ID)) {
 				rxChar = uart_getc(UART_ID);
 			}
-			if (rxChar == 'b') {
+			if (rxChar == 'h') {
 				gpio_xor_mask(1u << PICO_DEFAULT_LED_PIN); // toggle led
 			}
 		}
