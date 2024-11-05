@@ -103,7 +103,7 @@ static void prvSetupHardware();
 
 int main() {
 
-    UartMsg tmp={.data = "hello world", .len = 5};
+    UartMsg tmp={.data = "hhhhhhhhhhhhhhhhhhhello world", .len = 5};
     CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
     /* Configure the hardware */
     prvSetupHardware();
