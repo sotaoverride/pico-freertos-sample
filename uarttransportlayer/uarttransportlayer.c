@@ -45,13 +45,6 @@ void uart_task(void *pvParameters) {
 	UartMsg tmp;
 	memset(&tmp, 0, sizeof(UartMsg));
         CIRCBUF_POP(uart_tx_buff, &tmp);
-	//int size = sizeof(uart_msg);
-
-	// TODO semaphore
-
-	while (true) {
-		/* Start the receiving from UART. */
-		//if uart_tx bffer !- emputy and msg_writtern=false and counter != size-1
 		if (uart_is_writable(UART_ID) ) {
 			uart_putc(UART_ID, *((char*)(&tmp+counter)));
 		       counter++;	// echo incoming char
@@ -62,6 +55,11 @@ void uart_task(void *pvParameters) {
 			}
 					// 
 		}
+
+	// TODO semaphore
+
+	while (true) {
+		/* Start the receiving from UART. */
 		UART_receive();
 		//This write is for testing - in real word other HW would be doing the writes...
 
@@ -76,9 +74,36 @@ void uart_task(void *pvParameters) {
 			if (uart_is_readable(UART_ID)) {
 				rxChar = uart_getc(UART_ID);
 			}
-			if (rxChar == 'P') {
+			//if (rxChar == 'h') {
 				gpio_xor_mask(1u << 6); // toggle led
+				gpio_xor_mask(1u << PICO_DEFAULT_LED_PIN); // toggle led
+			//}
+		}
+	}
+}
+void uart_tx_task(void *pvParameters) {
+
+	/* To avoid compiler warnings */
+	(UartMsg*) pvParameters;
+	UartMsg tmp;
+	memset(&tmp, 0, sizeof(UartMsg));
+        CIRCBUF_POP(uart_tx_buff, &tmp);
+	int counter = 0;
+	//int size = sizeof(uart_msg);
+
+	// TODO semaphore
+
+	while (true) {
+		vTaskDelay(500);
+		if (uart_is_writable(UART_ID) ) {
+			uart_putc(UART_ID, *((char*)(&tmp+counter)));
+		       counter++;	// echo incoming char
+			if (counter == sizeof(UartMsg)-1){
+		      		counter =0;
+	              		memset(&tmp, 0, sizeof(UartMsg));
+		      		CIRCBUF_POP(uart_tx_buff, &tmp);
 			}
+					// 
 		}
 	}
 }

@@ -112,6 +112,8 @@ int main() {
     /* Create the UART task. */
     xTaskCreate(uart_task, "UART task", UART_TASK_STACK_SIZE,
         uart_tx_buff.buffer, UART_TASK_PRIORITY, NULL);
+    xTaskCreate(uart_tx_task, "UART TX task", UART_TASK_STACK_SIZE,
+        uart_tx_buff.buffer, UART_TASK_PRIORITY, NULL);
 
     /* Start the tasks and timer running. */
     vTaskStartScheduler();
