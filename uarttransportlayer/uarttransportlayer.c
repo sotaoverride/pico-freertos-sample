@@ -51,8 +51,16 @@ void uart_task(void *pvParameters) {
 	xTaskToNotify_UART = NULL;
 
 	// TODO semaphore
+	UartMsg tmp;
 
+	memset(&tmp, 0, sizeof(UartMsg));
+	CIRCBUF_POP(uart_tx_buff, &tmp);
+	int counter = 0;
 	while (true) {
+		if (uart_is_writable(UART_ID) ) {
+			uart_putc(UART_ID, *((char*)(&tmp.data+counter)));
+			counter++;	// echo incoming char
+		}
 		/* Start the receiving from UART. */
 		UART_receive();
 		//This write is for testing - in real word other HW would be doing the writes...
@@ -73,6 +81,12 @@ void uart_task(void *pvParameters) {
 				gpio_xor_mask(1u << PICO_DEFAULT_LED_PIN); // toggle led
 			}
 		}
+		if (counter == tmp.len){
+			counter =0;
+			memset(&tmp, 0, sizeof(UartMsg));
+			CIRCBUF_POP(uart_tx_buff, &tmp);
+		}
+//    	CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
 	}
 }
 void uart_tx_task(void *pvParameters) {
