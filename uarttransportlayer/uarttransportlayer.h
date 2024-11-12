@@ -41,5 +41,6 @@ void uart_task(void *pvParameters);
 void UART_receive();
 void UART_Isr();
 void uart_tx_task(void *pvParameters);
+void tx_buffer_task(void *pvParameters);
 #endif
 

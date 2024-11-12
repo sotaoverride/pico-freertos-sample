@@ -10,8 +10,6 @@ uint8_t rxChar = 'b';
 CIRCBUF_DEF(UartMsg, uart_tx_buff, 10);
 
 CIRCBUF_DEF_FUNCS(UartMsg, uart_tx_buff, 10);
-
-
 void initUART() {
 	// Set up our UART
 	uart_init(UART_ID, BAUD_RATE);
@@ -31,30 +29,26 @@ void initUART() {
 	irq_set_exclusive_handler(UART_IRQ, UART_Isr);
 	irq_set_enabled(UART_IRQ, true);
 }
+void tx_buffer_task(void *pvParameters) {
+
+	/* To avoid compiler warnings */
+	(UartMsg*) pvParameters;
+	for (;;) {
+		vTaskDelay(500);
+		CIRCBUF_PUSH(uart_tx_buff, pvParameters);
+	}
+
+}
 
 void uart_task(void *pvParameters) {
 
-    	gpio_init(6);
-    	gpio_set_dir(6, 1);
-    	gpio_put(6, 0);
+	gpio_init(6);
+	gpio_set_dir(6, 1);
+	gpio_put(6, 0);
 	/* To avoid compiler warnings */
 	(UartMsg*) pvParameters;
 	uint32_t ulNotificationValue;
 	xTaskToNotify_UART = NULL;
-	int counter = 0;
-	UartMsg tmp;
-	memset(&tmp, 0, sizeof(UartMsg));
-        CIRCBUF_POP(uart_tx_buff, &tmp);
-		if (uart_is_writable(UART_ID) ) {
-			uart_putc(UART_ID, *((char*)(&tmp+counter)));
-		       counter++;	// echo incoming char
-			if (counter == sizeof(UartMsg)-1){
-		      		counter =0;
-	              		memset(&tmp, 0, sizeof(UartMsg));
-		      		CIRCBUF_POP(uart_tx_buff, &tmp);
-			}
-					// 
-		}
 
 	// TODO semaphore
 
@@ -74,10 +68,10 @@ void uart_task(void *pvParameters) {
 			if (uart_is_readable(UART_ID)) {
 				rxChar = uart_getc(UART_ID);
 			}
-			//if (rxChar == 'h') {
+			if (rxChar == 'w') {
 				gpio_xor_mask(1u << 6); // toggle led
 				gpio_xor_mask(1u << PICO_DEFAULT_LED_PIN); // toggle led
-			//}
+			}
 		}
 	}
 }
@@ -87,24 +81,23 @@ void uart_tx_task(void *pvParameters) {
 	(UartMsg*) pvParameters;
 	UartMsg tmp;
 	memset(&tmp, 0, sizeof(UartMsg));
-        CIRCBUF_POP(uart_tx_buff, &tmp);
+	CIRCBUF_POP(uart_tx_buff, &tmp);
 	int counter = 0;
 	//int size = sizeof(uart_msg);
 
 	// TODO semaphore
 
 	while (true) {
-		vTaskDelay(500);
 		if (uart_is_writable(UART_ID) ) {
-			uart_putc(UART_ID, *((char*)(&tmp+counter)));
-		       counter++;	// echo incoming char
-			if (counter == sizeof(UartMsg)-1){
-		      		counter =0;
-	              		memset(&tmp, 0, sizeof(UartMsg));
-		      		CIRCBUF_POP(uart_tx_buff, &tmp);
-			}
-					// 
+			uart_putc(UART_ID, *((char*)(&tmp.data+counter)));
+			counter++;	// echo incoming char
 		}
+		if (counter == tmp.len){
+			counter =0;
+			memset(&tmp, 0, sizeof(UartMsg));
+			CIRCBUF_POP(uart_tx_buff, &tmp);
+		}
+		// 
 	}
 }
 // UART activate a receive with interrupt. Wait for ever for UART_BUFFER_SIZE bytes
