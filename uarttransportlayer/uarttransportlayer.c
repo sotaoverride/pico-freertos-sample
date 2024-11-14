@@ -51,14 +51,14 @@ void uart_task(void *pvParameters) {
 	xTaskToNotify_UART = NULL;
 
 	// TODO semaphore
-	UartMsg tmp;
+	UartMsg tmp={.data="hello world", .len=11};
 
-	memset(&tmp, 0, sizeof(UartMsg));
+	CIRCBUF_PUSH(uart_tx_buff, &tmp);
 	CIRCBUF_POP(uart_tx_buff, &tmp);
 	int counter = 0;
 	while (true) {
 		if (uart_is_writable(UART_ID) ) {
-			uart_putc(UART_ID, *((char*)(&tmp.data+counter)));
+			uart_putc(UART_ID, tmp.data[counter]);
 			counter++;	// echo incoming char
 		}
 		/* Start the receiving from UART. */
@@ -83,7 +83,7 @@ void uart_task(void *pvParameters) {
 		}
 		if (counter == tmp.len){
 			counter =0;
-			memset(&tmp, 0, sizeof(UartMsg));
+			CIRCBUF_PUSH(uart_tx_buff, &tmp);
 			CIRCBUF_POP(uart_tx_buff, &tmp);
 		}
 //    	CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
