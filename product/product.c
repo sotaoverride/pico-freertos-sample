@@ -102,19 +102,19 @@ void main()
 static void prvSetupHardware();
 
 int main() {
-    UartMsg tmp={.data = "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwhhhhhhhhhhhhhhhhhhhello world", .len = 50};
+//    UartMsg tmp={.data = "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwhhhhhhhhhhhhhhhhhhhello world", .len = 50};
 
-    CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
-    CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
-    CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
-    CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
-    CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
+  //  CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
+  //  CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
+  //  CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
+  //  CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
+  //  CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
     /* Configure the hardware */
     prvSetupHardware();
 
 
     /* Create the UART task. */
-    xTaskCreate(tx_buffer_task, "UART tx buffer fill up tast", UART_TASK_STACK_SIZE, &tmp, UART_TASK_PRIORITY, NULL);
+    //xTaskCreate(tx_buffer_task, "UART tx buffer fill up tast", UART_TASK_STACK_SIZE, &tmp, UART_TASK_PRIORITY, NULL);
     xTaskCreate(uart_task, "UART task", UART_TASK_STACK_SIZE,
         uart_tx_buff.buffer, UART_TASK_PRIORITY, NULL);
 

@@ -86,6 +86,7 @@ void uart_task(void *pvParameters) {
 			CIRCBUF_PUSH(uart_tx_buff, &tmp);
 			CIRCBUF_POP(uart_tx_buff, &tmp);
 		}
+		vTaskDelay(50);
 //    	CIRCBUF_PUSH(uart_tx_buff, (void *)&tmp);
 	}
 }
